@@ -8,10 +8,11 @@ MAX_DISTRESS = 4_000_000
 def main():
     with open(os.path.dirname(__file__) + "/input.txt") as f:
         lines = f.read().split("\n")
-        sensors, beacons = parse_items(lines)
 
-        print(count_covered(sensors, beacons))
-        print(find_distress_freq(sensors))
+    sensors, beacons = parse_items(lines)
+
+    print(count_covered(sensors, beacons))
+    print(find_distress_freq(sensors))
 
 
 def count_covered(sensors, beacons):
@@ -20,6 +21,7 @@ def count_covered(sensors, beacons):
     covered = 0
 
     intervals = get_intervals(sensors, y, min_x, max_x)
+    intervals = merge_intervals(intervals)
 
     for interval in intervals:
         covered += interval[1] - interval[0] + 1
@@ -33,11 +35,16 @@ def count_covered(sensors, beacons):
 
 def find_distress_freq(sensors):
     for y in range(MAX_DISTRESS + 1):
-        intervals = get_intervals(sensors, y, 0, MAX_DISTRESS)
+        min_x = 0
+        max_x = MAX_DISTRESS
+        intervals = get_intervals(sensors, y, min_x, max_x)
 
-        if len(intervals) > 1:
-            x = intervals[0][1] + 1
-            return x * 4_000_000 + y
+        for interval in intervals:
+            if interval[0] > min_x:
+                return (interval[0] - 1) * 4_000_000 + y
+
+            if interval[1] > min_x:
+                min_x = interval[1] + 1
 
 
 def get_intervals(sensors, y, min_x, max_x):
@@ -56,7 +63,7 @@ def get_intervals(sensors, y, min_x, max_x):
 
         intervals.append((start_x, end_x))
 
-    return merge_intervals(intervals)
+    return sorted(intervals, key=lambda x: x[0])
 
 
 def merge_intervals(intervals):

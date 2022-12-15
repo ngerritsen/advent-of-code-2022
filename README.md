@@ -12,3 +12,10 @@ in [Python](https://www.python.org).
 1. Make sure [Python 3](https://www.python.org/downloads/) is installed on the system.
 2. Add the input in a file named `input.txt` next to the solution before running.
 3. Run: `python3 src/{day_number}/main.py`
+
+### Faster!
+
+Want assignments to run faster? Install [PyPy](https://pypy.org/). It is an alternative implementation of Python
+featuring a JIT, which can run significantly faster.
+
+After installing it just run: `pypy src/{day_number}/main.py`.
