@@ -1,3 +1,4 @@
+import itertools
 import os
 import re
 from functools import cache
@@ -20,9 +21,10 @@ def main():
     valves = parse_valves(lines)
 
     print(release_pressure(valves))
+    print(release_pressure(valves, True))
 
 
-def release_pressure(valves):
+def release_pressure(valves, with_elephant=False):
     @cache
     def find_max_pressure(curr, minutes, opened):
         if minutes < 2:
@@ -43,7 +45,26 @@ def release_pressure(valves):
 
         return max_pressure
 
-    return find_max_pressure(START, 30, frozenset())
+    if with_elephant:
+        relevant_valves = filter(lambda v: v.rate > 0, valves.values())
+        relevant_valves = [v.name for v in relevant_valves]
+        partitions = set()
+
+        for i in range(len(relevant_valves)):
+            for c in itertools.combinations(relevant_valves, i):
+                partitions.add(tuple(sorted(c)))
+
+        max_combined_pressure = 0
+
+        for i, pa in enumerate(partitions):
+            pb = filter(lambda v: v not in pa, relevant_valves)
+            pressure_a = find_max_pressure(START, 26, frozenset(pa))
+            pressure_b = find_max_pressure(START, 26, frozenset(pb))
+            max_combined_pressure = max(max_combined_pressure, pressure_a + pressure_b)
+
+        return max_combined_pressure
+    else:
+        return find_max_pressure(START, 30, frozenset())
 
 
 def parse_valves(lines):
