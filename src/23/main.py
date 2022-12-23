@@ -79,18 +79,6 @@ def is_clear(elves, elf):
     return True
 
 
-def print_elves(elves):
-    x_points = [elf[0] for elf in elves]
-    y_points = [elf[1] for elf in elves]
-
-    for y in range(min(y_points), max(y_points) + 1):
-        print()
-        for x in range(min(x_points), max(x_points) + 1):
-            print("#" if (x, y) in elves else ".", end="")
-
-    print("\n")
-
-
 def get_diag_vec(vec, d):
     if vec[0] == 0:
         return vec[0] + d, vec[1]
